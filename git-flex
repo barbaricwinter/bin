@@ -1,0 +1,44 @@
+#!/bin/sh
+
+(
+    [ "${1}" == "init" ] &&
+    [ "${2}" == "cte" ] &&
+    git init &&
+    git config user.name "Emory Merryman" &&
+    git config user.email "emory.merryman@deciphernow.com" &&
+    git remote add upstream git ssh://upstream/cte/$(basename $(pwd)).git &&
+    git remote set-url --push origin no_push
+    git remote add origin ssh://origin/cte/$(basename $(pwd)).git &&
+    cp $(which post-commit.sh) .git/hooks/post-commit
+) ||
+(
+    [ "${1}" == "init" ] &&
+    [ "${2}" == "barbaricwinter" ] &&
+    git init &&
+    git config user.name "Emory Merryman" &&
+    git config user.email "emory.merryman@deciphernow.com" &&
+    git remote add origin git@github.com:barbaricwinter/$(basename $(pwd)).git &&
+    cp $(which post-commit.sh) .git/hooks/post-commit &&
+    cp /workspace/documents/COPYING . &&
+    sed -e "s#foobar#$(basename $(pwd))#" -e "wREADME.md" /workspace/documents/README.md &&
+    git checkout -b versions/0 &&
+    git add COPYING README.md &&
+    git commit -m "init" &&
+    git checkout -b versions/0.0 &&
+    git checkout -b versions/0.0.0 &&
+    git checkout -b versions/0.0.0.0 &&
+    git checkout -b issues/00001 &&
+    git checkout -b scratch/$(uuidgen)
+    git push origin versions/0 versions/0.0 versions/0.0.0 versions/0.0.0.0 issues/00001 $(git rev-parse --abbrev-ref HEAD)
+) ||
+(
+    [ "${1}" == "init" ] &&
+    [ "${2}" == "tidyrailroad" ] &&
+    git init &&
+    git config user.name "Emory Merryman" &&
+    git config user.email "emory.merryman@dgmail.com" &&
+    git remote add origin git@github.com:barbaricwinter/$(basename $(pwd)).git &&
+    cp $(which post-commit.sh) .git/hooks/post-commit
+) ||
+( [ "${1}" == "scratch" ] && git checkout -b scratch/$(uuidgen) ) ||
+echo Unknown Command
