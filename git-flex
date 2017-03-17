@@ -40,5 +40,16 @@
     git remote add origin git@github.com:barbaricwinter/$(basename $(pwd)).git &&
     cp $(which post-commit.sh) .git/hooks/post-commit
 ) ||
+(
+    [ "${1}" == "rebase" ] &&
+    [ -z "$(git diff)" ] &&
+    [ -z "$(git clean -n -d)" ] &&
+    git fetch upstream "${3}" &&
+    git checkout -b scratch/$(uuidgen) &&
+    git rebase "upstream/${3}" &&
+    git push $(git rev-parse --abbrev-ref HEAD) &&
+    git checkout -b scratch/$(uuidgen) &&
+    git commit
+) ||
 ( [ "${1}" == "scratch" ] && git checkout -b scratch/$(uuidgen) ) ||
 echo Unknown Command
