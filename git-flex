@@ -9,31 +9,32 @@ then
     git remote set-url --push upstream no_push
     git remote add origin ssh://origin/cte/$(basename $(pwd)).git &&
     cp $(which post-commit.sh) .git/hooks/post-commit
-elif [ "${1}" == "init" ] && [ "${2}" == "barbaricwinter" ]
+elif [ "${1}" == "init" ] && [ "$(basename $(dirname $(pwd)))" == "barbaricwinter" ]
 then
-    git init &&
     git config user.name "Emory Merryman" &&
     git config user.email "emory.merryman@deciphernow.com" &&
-    git remote add origin git@github.com:barbaricwinter/$(basename $(pwd)).git &&
-    cp $(which post-commit.sh) .git/hooks/post-commit &&
+    git remote add origin git@github.com:$(basename $(dirname $(pwd)))/$(basename $(pwd)).git &&
+    cp $(which post-commit.sh) .git/hooks/post-commit
+elif [ "${1}" == "init" ] && [ "$(basename $(dirname $(pwd)))"  == "tidyrailroad" ]
+then
+    git config user.name "Emory Merryman" &&
+    git config user.email "emory.merryman@dgmail.com" &&
+    git remote add upstream git@github.com:$(basename $(dirname $(pwd)))/$(basename $(pwd)).git &&
+    git remote set-url --push upstream no_push
+    git remote add origin git@github.com:$(basename $(dirname $(pwd)))/$(basename $(pwd)).git &&
+    cp $(which post-commit.sh) .git/hooks/post-commit
+elif [ "${1}" == "inaugurate" ]
+then
     cp /workspace/documents/COPYING . &&
     sed -e "s#foobar#$(basename $(pwd))#" -e "wREADME.md" /workspace/documents/README.md &&
-    git checkout -b versions/0 &&
     git add COPYING README.md &&
-    git commit -m "init" &&
+    git checkout -b versions/0 &&
+    git commit --message "init" &&
     git checkout -b versions/0.0 &&
     git checkout -b versions/0.0.0 &&
     git checkout -b versions/0.0.0.0 &&
     git checkout -b issues/00001 &&
-    git checkout -b scratch/$(uuidgen)
-    git push origin versions/0 versions/0.0 versions/0.0.0 versions/0.0.0.0 issues/00001 $(git rev-parse --abbrev-ref HEAD)
-elif [ "${1}" == "init" ] && [ "${2}" == "tidyrailroad" ]
-then
-    git init &&
-    git config user.name "Emory Merryman" &&
-    git config user.email "emory.merryman@dgmail.com" &&
-    git remote add origin git@github.com:barbaricwinter/$(basename $(pwd)).git &&
-    cp $(which post-commit.sh) .git/hooks/post-commit
+    git flex scratch
 elif [ "${1}" == "rebase" ] && [ -z "$(git diff)" ] && [ -z "$(git clean -n -d)" ]
 then
     git fetch upstream "${3}" &&
