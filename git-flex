@@ -1,19 +1,16 @@
 #!/bin/sh
 
-(
-    [ "${1}" == "init" ] &&
-    [ "${2}" == "cte" ] &&
-    git init &&
+
+if [ "${1}" == "init" ] && [ "$(basename $(dirname $(pwd)))" == "cte" ]
+then
     git config user.name "Emory Merryman" &&
     git config user.email "emory.merryman@deciphernow.com" &&
-    git remote add upstream git ssh://upstream/cte/$(basename $(pwd)).git &&
-    git remote set-url --push origin no_push
+    git remote add upstream ssh://upstream/cte/$(basename $(pwd)).git &&
+    git remote set-url --push upstream no_push
     git remote add origin ssh://origin/cte/$(basename $(pwd)).git &&
     cp $(which post-commit.sh) .git/hooks/post-commit
-) ||
-(
-    [ "${1}" == "init" ] &&
-    [ "${2}" == "barbaricwinter" ] &&
+elif [ "${1}" == "init" ] && [ "${2}" == "barbaricwinter" ]
+then
     git init &&
     git config user.name "Emory Merryman" &&
     git config user.email "emory.merryman@deciphernow.com" &&
@@ -30,29 +27,24 @@
     git checkout -b issues/00001 &&
     git checkout -b scratch/$(uuidgen)
     git push origin versions/0 versions/0.0 versions/0.0.0 versions/0.0.0.0 issues/00001 $(git rev-parse --abbrev-ref HEAD)
-) ||
-(
-    [ "${1}" == "init" ] &&
-    [ "${2}" == "tidyrailroad" ] &&
+elif [ "${1}" == "init" ] && [ "${2}" == "tidyrailroad" ]
+then
     git init &&
     git config user.name "Emory Merryman" &&
     git config user.email "emory.merryman@dgmail.com" &&
     git remote add origin git@github.com:barbaricwinter/$(basename $(pwd)).git &&
     cp $(which post-commit.sh) .git/hooks/post-commit
-) ||
-(
-    [ "${1}" == "rebase" ] &&
-    [ -z "$(git diff)" ] &&
-    [ -z "$(git clean -n -d)" ] &&
+elif [ "${1}" == "rebase" ] && [ -z "$(git diff)" ] && [ -z "$(git clean -n -d)" ]
+then
     git fetch upstream "${3}" &&
     git checkout -b scratch/$(uuidgen) &&
     git rebase "upstream/${3}" &&
     git push $(git rev-parse --abbrev-ref HEAD) &&
     git checkout -b scratch/$(uuidgen) &&
     git commit
-) ||
-(
-    [ "${1}" == "scratch" ] &&
+elif [ "${1}" == "scratch" ]
+then
     git checkout -b scratch/$(uuidgen)
-) ||
-echo Unknown Command
+else
+    echo Unknown Command
+fi
