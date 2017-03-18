@@ -13,6 +13,8 @@ elif [ "${1}" == "init" ] && [ "$(basename $(dirname $(pwd)))" == "barbaricwinte
 then
     git config user.name "Emory Merryman" &&
     git config user.email "emory.merryman@deciphernow.com" &&
+    git remote add upstream git@github.com:$(basename $(dirname $(pwd)))/$(basename $(pwd)).git &&
+    git remote set-url --push upstream no_push
     git remote add origin git@github.com:$(basename $(dirname $(pwd)))/$(basename $(pwd)).git &&
     cp $(which post-commit.sh) .git/hooks/post-commit
 elif [ "${1}" == "init" ] && [ "$(basename $(dirname $(pwd)))"  == "tidyrailroad" ]
