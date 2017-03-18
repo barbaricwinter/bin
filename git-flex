@@ -51,5 +51,8 @@
     git checkout -b scratch/$(uuidgen) &&
     git commit
 ) ||
-( [ "${1}" == "scratch" ] && git checkout -b scratch/$(uuidgen) ) ||
+(
+    [ "${1}" == "scratch" ] &&
+    git checkout -b scratch/$(uuidgen)
+) ||
 echo Unknown Command
