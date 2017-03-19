@@ -45,6 +45,11 @@ then
     git push $(git rev-parse --abbrev-ref HEAD) &&
     git checkout -b scratch/$(uuidgen) &&
     git commit
+elif [ "${1}" == "refresh" ]
+then
+    BRANCH=$(git branch | sed -e "s#^* (HEAD detached at upstream\/##" -e "s#)##") &&
+        git fetch upstream ${BRANCH} &&
+        git checkout upstream/BRANCH=$(git branch | sed -e "s#^* (HEAD detached at upstream\/##" -e "s#)##")
 elif [ "${1}" == "scratch" ]
 then
     git checkout -b scratch/$(uuidgen)
