@@ -22,10 +22,14 @@ do
             shift &&
             shift
         ;;
+        *)
+            echo "Unknown Option " ${1} &&
+            exit 64
+        ;;
     esac
 done && 
-    DOT_SSH=$(docker \
+    docker \
         volume \
         create \
         --label "com.deciphernow.emorymerryman.dot_ssh=${TITLE}" \
-        --label "com.deciphernow.emorymerryman.tstamp=$(date +%s)")
+        --label "com.deciphernow.emorymerryman.tstamp=$(date +%s)"

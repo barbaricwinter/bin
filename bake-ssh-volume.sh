@@ -31,19 +31,23 @@ do
             GITLAB_PRIVATE_TOKEN=${2} &&
             shift &&
             shift
+        ;;
+        *)
+            echo Unknown Options ${1} &&
+            exit 64
+        ;;
     esac
 done &&
     [ ! -z "${TITLE}" ] &&
     [ ! -z "${DOT_SSH}" ] &&
     [ ! -z "${GITLAB_PRIVATE_TOKEN}" ] &&
-    echo docker \
+    docker \
         run \
         --interactive \
         --volume ${DOT_SSH}:/root/.ssh \
         --workdir /root/.ssh \
         alpine:3.4 \
         chmod 0700 . &&
-   echo hi && exit 64
     docker \
         run \
         --interactive \
@@ -51,7 +55,6 @@ done &&
         --workdir /root/.ssh \
         alpine:3.4 \
         chown 1000:1000 . &&
-   echo hi2 && exit 64
     docker \
         run \
         --interactive \
@@ -67,7 +70,6 @@ done &&
         --workdir /root/.ssh \
         alpine:3.4 \
         chown 1000:1000 id_rsa &&
-    echo hi1 && exit 64
     docker \
         run \
         --interactive \
@@ -88,7 +90,7 @@ HostName gitlab.363-283.io
 User git
 Port 2252
 StrictHostKeyChecking no
-IdentityFile ~/.ssh/id_rsa[
+IdentityFile ~/.ssh/id_rsa
 EOF
     )| docker \
         run \
