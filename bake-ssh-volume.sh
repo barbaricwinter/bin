@@ -17,11 +17,6 @@
 while [ "${#}" -gt 0 ]
 do
     case ${1} in
-        --title)
-            TITLE=${2} &&
-            shift &&
-            shift
-        ;;
         --dot-ssh)
             DOT_SSH=${2} &&
             shift &&
@@ -38,9 +33,13 @@ do
         ;;
     esac
 done &&
-    [ ! -z "${TITLE}" ] &&
     [ ! -z "${DOT_SSH}" ] &&
     [ ! -z "${GITLAB_PRIVATE_TOKEN}" ] &&
+    TITLE=$(docker \
+        inspect \
+        --format "{{ index .Labels \"com.deciphernow.emorymerryman.dot_ssh\"}}" \
+        ${DOT_SSH}) && 
+    [ ! -z "${TITLE}" ] &&
     docker \
         run \
         --interactive \

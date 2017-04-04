@@ -28,6 +28,7 @@ do
         ;;
     esac
 done && 
+    [ ! -z "${TITLE}" ] &&
     docker \
         volume \
         create \
