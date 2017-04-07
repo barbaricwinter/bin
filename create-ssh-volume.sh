@@ -29,4 +29,4 @@ do
     esac
 done &&
     ( [ ! -z "${TITLE}" ] || (echo "Missing Title" && exit 65)) &&
-    docker volume create --label com.deciphernow.emorymerryman.tstamp=$(date +%s) --label com.deciphernow.emorymerryman.ssh="${TITLE}"
+    docker volume create --label com.deciphernow.emorymerryman.tstamp=$(date +%s) --label com.deciphernow.emorymerryman.dot_ssh="${TITLE}"
