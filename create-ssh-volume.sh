@@ -14,23 +14,19 @@
 #    You should have received a copy of the GNU General Public License
 #    along with bin.  If not, see <http://www.gnu.org/licenses/>.
 
-while [ "${#}" -gt 0 ]
+while [ ${#} -gt 0 ]
 do
     case ${1} in
         --title)
             TITLE=${2} &&
-            shift &&
-            shift
+                shift &&
+                shift
         ;;
         *)
-            echo "Unknown Option " ${1} &&
-            exit 64
+            echo Unknown Option ${1} &&
+                exit 64
         ;;
     esac
-done && 
-    [ ! -z "${TITLE}" ] &&
-    docker \
-        volume \
-        create \
-        --label "com.deciphernow.emorymerryman.dot_ssh=${TITLE}" \
-        --label "com.deciphernow.emorymerryman.tstamp=$(date +%s)"
+done &&
+    ( [ ! -z "${TITLE}" ] || (echo "Missing Title" && exit 65)) &&
+    docker volume create --label com.deciphernow.emorymerryman.tstamp=$(date +%s) --label com.deciphernow.emorymerryman.ssh="${TITLE}"

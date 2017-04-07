@@ -19,17 +19,22 @@ do
     case ${1} in
         --dot-ssh)
             DOT_SSH=${2} &&
-            shift &&
-            shift
+                shift &&
+                shift
         ;;
         --gitlab-private-token)
             GITLAB_PRIVATE_TOKEN=${2} &&
-            shift &&
-            shift
+                shift &&
+                shift
+        ;;
+        --passphrase)
+            PASSPHRASE=${2} &&
+                shift &&
+                shift
         ;;
         *)
             echo Unknown Options ${1} &&
-            exit 64
+                exit 64
         ;;
     esac
 done &&
@@ -44,16 +49,10 @@ done &&
         run \
         --interactive \
         --volume ${DOT_SSH}:/root/.ssh \
-        --workdir /root/.ssh \
-        alpine:3.4 \
+        --workdir /home/user/.ssh \
+        --user user \
+        barbaricwinter/alpine:0.0.0 \
         chmod 0700 . &&
-    docker \
-        run \
-        --interactive \
-        --volume ${DOT_SSH}:/root/.ssh \
-        --workdir /root/.ssh \
-        alpine:3.4 \
-        chown 1000:1000 . &&
     docker \
         run \
         --interactive \
@@ -61,21 +60,21 @@ done &&
         --workdir /root/.ssh \
         --entrypoint ssh-keygen \
         tidyrailroad/openssh-client:0.0.0 \
-        -f id_rsa -P "" -C "${TITLE}" &&
+        -f id_rsa -P "${PASSPHRASE}" -C "${TITLE}" &&
     docker \
         run \
         --interactive \
         --volume ${DOT_SSH}:/root/.ssh \
         --workdir /root/.ssh \
-        alpine:3.4 \
-        chown 1000:1000 id_rsa &&
+        barbaricwinter/alpine:.0.0.0 \
+        chown user:user id_rsa &&
     docker \
         run \
         --interactive \
         --volume ${DOT_SSH}:/root/.ssh \
         --workdir /root/.ssh \
-        alpine:3.4 \
-        chown 1000:1000 id_rsa.pub &&
+        barbaricwinter/alpine:.0.0.0 \
+        chown user:user id_rsa &&
     (cat <<EOF
 Host origin
 HostName gitlab.363-283.io
@@ -94,36 +93,32 @@ EOF
     )| docker \
         run \
         --interactive \
-        --volume ${DOT_SSH}:/root/.ssh \
-        --workdir /root/.ssh \
-        tidyrailroad/tee:0.0.0 \
+        --volume ${DOT_SSH}:/home/user/.ssh \
+        --workdir /home/user/.ssh \
+        --user user \
+        barbaricwinter/alpine:0.0.0 \
         config &&
     docker \
         run \
         --interactive \
-        --volume ${DOT_SSH}:/root/.ssh \
-        --workdir /root/.ssh \
-        alpine:3.4 \
+        --volume ${DOT_SSH}:/home/user/.ssh \
+        --workdir /home/user/.ssh \
+        barbaricwinter/alpine:0.0.0 \
         chmod 0600 config &&
-    docker \
-        run \
-        --interactive \
-        --volume ${DOT_SSH}:/root/.ssh \
-        --workdir /root/.ssh \
-        alpine:3.4 \
-        chown 1000:1000 config &&
     sleep 1s &&
     KEY=$(docker \
         run \
         --interactive \
-        --volume ${DOT_SSH}:/root/.ssh:ro \
-        --workdir /root/.ssh \
-        alpine:3.4 \
+        --volume ${DOT_SSH}:/home/user/.ssh:ro \
+        --workdir /home/user/.ssh \
+        --user user \
+        barbaricwinter/alpine:0.0.0 \
         cat id_rsa.pub) &&
     docker \
         run \
         --interactive \
-        --volume ${DOT_SSH}:/root/.ssh:ro \
-        --workdir /root/.ssh \
+        --volume ${DOT_SSH}:/home/user/.ssh:ro \
+        --workdir /home/user/.ssh \
+        --user user \
         tidyrailroad/curl:0.0.0 \
         --data-urlencode "key=${KEY}" --data-urlencode "title=${TITLE}" https://gitlab.363-283.io/api/v3/user/keys?private_token=${GITLAB_PRIVATE_TOKEN}
