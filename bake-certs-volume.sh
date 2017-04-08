@@ -42,7 +42,6 @@ done &&
     ( [ ! -z "${CONFLUENCE_USER_ID}" ] || (echo Missing Confluence ID && exit 66)) &&
     ( [ ! -z "${CONFLUENCE_PASSWORD}" ] || (echo Missing Confluence Password && exit 67)) &&
     TEMP_VOLUME=$(docker volume create --label com.deciphernow.emorymerryman.tstamp=$(date +%s) --label com.deciphernow.emorymerryman.temporary=true) &&
-    echo TEMP_VOLUME=${TEMP_VOLUME} &&
     docker \
         run \
         --interactive \
@@ -50,17 +49,7 @@ done &&
         --volume ${TEMP_VOLUME}:/usr/local/src \
         --workdir /usr/local/src \
         tidyrailroad/curl:0.0.0 \
-        -u ${CONFLUENCE_USER_ID} -p ${CONFLUENCE_PASSWORD} --output ChimeraTestCerts_v2.zip "https://confluence.363-283.io/download/attachments/2458486/ChimeraTestCerts_v2.zip?version=1&modificationDate=1450375419090&api=v2&download=true" &&
-    echo docker \
-        run \
-        --interactive \
-        --rm \
-        --volume ${TEMP_VOLUME}:/input:ro \
-        --volume ${CERTS}:/output \
-        --workdir /input \
-        --entrypoint unzip \
-        tidyrailroad/zip:0.0.0 \
-        ChimeraTestCerts_v2.zip -d /output
+        --user ${CONFLUENCE_USER_ID}:${CONFLUENCE_PASSWORD} --output ChimeraTestCerts_v2.zip "https://confluence.363-283.io/download/attachments/2458486/ChimeraTestCerts_v2.zip?version=1&modificationDate=1450375419090&api=v2&download=true" &&
     docker \
         run \
         --interactive \
@@ -71,3 +60,12 @@ done &&
         --entrypoint unzip \
         tidyrailroad/zip:0.0.0 \
         ChimeraTestCerts_v2.zip -d /output
+    docker volume rm ${TEMP_VOLUME} &&
+    docker \
+        run \
+        --interactive \
+        --volume ${CERTS}:/volume \
+        --workdir /volume \
+        --entrypoint chown \
+        barbaricwinter/chown:0.0.0 \
+        -R user:user .
