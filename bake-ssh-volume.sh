@@ -53,23 +53,6 @@ done &&
         --entrypoint ssh-keygen \
         tidyrailroad/openssh-client:0.0.0 \
         -f id_rsa -P "${PASSPHRASE}" -C "${TITLE}" &&
-    docker \
-        run \
-        --interactive \
-        --volume ${DOT_SSH}:/home/user/.ssh \
-        --workdir /home/user/.ssh \
-        --user root \
-        --entrypoint chown \
-        barbaricwinter/alpine:0.1.1 \
-        user:user id_rsa &&
-    docker \
-        run \
-        --interactive \
-        --volume ${DOT_SSH}:/home/user/.ssh \
-        --workdir /home/user/.ssh \
-        --entrypoint chown \
-        barbaricwinter/alpine:0.1.1 \
-        user:user id_rsa &&
     (cat <<EOF
 Host origin
 HostName gitlab.363-283.io
@@ -91,7 +74,7 @@ EOF
         --volume ${DOT_SSH}:/home/user/.ssh \
         --workdir /home/user/.ssh \
         --entrypoint tee \
-        barbaricwinter/alpine:0.1.1 \
+        barbaricwinter/alpine:0.0.1 \
         config &&
     docker \
         run \
@@ -99,7 +82,7 @@ EOF
         --volume ${DOT_SSH}:/home/user/.ssh \
         --workdir /home/user/.ssh \
         --entrypoint chmod \
-        barbaricwinter/alpine:0.1.1 \
+        barbaricwinter/alpine:0.0.1 \
         0600 config &&
     sleep 1s &&
     KEY=$(docker \
@@ -108,7 +91,7 @@ EOF
         --volume ${DOT_SSH}:/home/user/.ssh:ro \
         --workdir /home/user/.ssh \
         --entrypoint cat \
-        barbaricwinter/alpine:0.1.1 \
+        barbaricwinter/alpine:0.0.1 \
         id_rsa.pub) &&
     docker \
         run \
@@ -116,4 +99,20 @@ EOF
         --volume ${DOT_SSH}:/home/user/.ssh:ro \
         --workdir /home/user/.ssh \
         tidyrailroad/curl:0.0.0 \
-        --data-urlencode "key=${KEY}" --data-urlencode "title=${TITLE}" https://gitlab.363-283.io/api/v3/user/keys?private_token=${GITLAB_PRIVATE_TOKEN}
+        --data-urlencode "key=${KEY}" --data-urlencode "title=${TITLE}" https://gitlab.363-283.io/api/v3/user/keys?private_token=${GITLAB_PRIVATE_TOKEN} &&
+    docker \
+        run \
+        --interactive \
+        --volume ${DOT_SSH}:/home/user/.ssh \
+        --workdir /home/user/.ssh \
+        --entrypoint chown \
+        barbaricwinter/alpine:0.0.1 \
+        user:user id_rsa id_rsa.pub config &&
+    docker \
+        run \
+        --interactive \
+        --volume ${DOT_SSH}:/volume \
+        --workdir /volume \
+        --entrypoint chmod \
+        barbaricwinter/chown:0.0.0 \
+        0700 .
