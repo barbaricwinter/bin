@@ -32,12 +32,10 @@ done &&
         --interactive \
         --rm \
         --volume ${CERTS}:/certs:ro \
-        --volume ${CHROME_HOME}:/home/user \
+        --volume ${CHROME_HOME}:/root \
         --env DISPLAY=$DISPLAY \
         --volume /tmp/.X11-unix:/tmp/.X11-unix \
-        --device /dev/dri/card0 \
-        --volume /run/user/$UID/pulse/native:/tmp/pulse \
-        docker.io/sassmann/debian-chromium
+        tidyrailroad/chromium:0.0.0
     docker \
         run \
         --interactive \
