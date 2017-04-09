@@ -17,22 +17,14 @@
 while [ "${#}" -gt 0 ]
 do
     case ${1} in
-        --certs)
-            CERTS=${2} &&
-                shift &&
-                shift
-        ;;
-        --chrome-home)
-            CHROME_HOME=${2} &&
-                shift &&
-                shift
-        ;;
         *)
             echo Unknown Options ${1} &&
                 exit 64
         ;;
     esac
 done &&
+    CERTS=$(docker volume ls --filter label=com.deciphernow.emorymerryman.certs --quiet) &&
+    CHROME_HOME=$(docker volume ls --filter label=com.deciphernow.emorymerryman.object-drive-ui.chrome --quiet) &&
     ( [ ! -z "${CERTS}" ] || (echo MISSING CERTS VOLUME && exit 65)) &&
     ( [ ! -z "${CHROME_HOME}" ] || (echo MISSING CHROME HOME VOLUME && exit 65)) &&
     docker \

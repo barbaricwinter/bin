@@ -14,20 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with bin.  If not, see <http://www.gnu.org/licenses/>.
 
-while [ ${#} -gt 0 ]
+docker volume ls --filter label=com.deciphernow.emorymerryman.object-drive-ui.chrome --filter dangling=true --quiet | while read VOLUME
 do
-    case ${1} in
-        --title)
-            TITLE=${2} &&
-                shift &&
-                shift
-        ;;
-        *)
-            echo Unknown Option ${1} &&
-                exit 64
-        ;;
-    esac
-done &&
-    ( [ ! -z "${TITLE}" ] || (echo "Missing Title" && exit 65)) &&
-    ( [ -z "$(docker volume ls --filter label=com.deciphernow.emorymerryman.dot_ssh --quiet)" ] || (echo "Volume Already Exists" && exit 66)) &&
-    docker volume create --label com.deciphernow.emorymerryman.tstamp=$(date +%s) --label com.deciphernow.emorymerryman.dot_ssh="${TITLE}"
+    docker volume rm ${VOLUME}
+done

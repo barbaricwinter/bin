@@ -23,4 +23,5 @@ do
         ;;
     esac
 done &&
+    ( [ -z "$(docker volume ls --filter label=com.deciphernow.emorymerryman.object-drive-ui.chrome --quiet)" ] || (echo Volume Already Exists && exit 65)) &&
     docker volume create --label com.deciphernow.emorymerryman.tstamp=$(date +%s) --label com.deciphernow.emorymerryman.object-drive-ui.chrome

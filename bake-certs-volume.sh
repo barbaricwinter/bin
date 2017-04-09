@@ -17,11 +17,6 @@
 while [ "${#}" -gt 0 ]
 do
     case ${1} in
-        --certs)
-            CERTS=${2} &&
-                shift &&
-                shift
-        ;;
         --confluence-user-id)
             CONFLUENCE_USER_ID=${2} &&
                 shift &&
@@ -38,6 +33,7 @@ do
         ;;
     esac
 done &&
+    CERTS=$(docker volume ls --filter label=com.deciphernow.emorymerryman.certs --quiet) &&
     ( [ ! -z "${CERTS}" ] || (echo Missing Certs && exit 65)) &&
     ( [ ! -z "${CONFLUENCE_USER_ID}" ] || (echo Missing Confluence ID && exit 66)) &&
     ( [ ! -z "${CONFLUENCE_PASSWORD}" ] || (echo Missing Confluence Password && exit 67)) &&

@@ -17,11 +17,6 @@
 while [ "${#}" -gt 0 ]
 do
     case ${1} in
-        --dot-ssh)
-            DOT_SSH=${2} &&
-                shift &&
-                shift
-        ;;
         --gitlab-private-token)
             GITLAB_PRIVATE_TOKEN=${2} &&
                 shift &&
@@ -38,6 +33,7 @@ do
         ;;
     esac
 done &&
+    DOT_SSH=$(docker volume ls --filter label=com.deciphernow.emorymerryman.dot_ssh --quiet) &&
     ( [ ! -z "${DOT_SSH}" ] || (echo MISSING DOT_SSH VOLUME && exit 65)) &&
     ( [ ! -z "${GITLAB_PRIVATE_TOKEN}" ] || (echo MISSING GITLAB PRIVATE TOKEN && exit 66)) &&
     TITLE=$(docker \
